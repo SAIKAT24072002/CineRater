@@ -4,7 +4,7 @@ const API_KEY = "3c97adf";
 
 const parseRating = (imdbRating) => {
   if (!imdbRating || imdbRating === "N/A") return 0;
-  return parseFloat(imdbRating) / 2; // Convert 10-scale to 5-scale
+  return parseFloat(imdbRating) / 2; 
 };
 
 const parseVotes = (imdbVotes) => {
