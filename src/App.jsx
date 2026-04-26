@@ -1,191 +1,16 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
-const MOVIES = [
-  {
-    id: 1,
-    title: "Oppenheimer",
-    year: 2023,
-    genre: ["Drama", "History"],
-    poster: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
-    rating: 4.7,
-    votes: 2341,
-    director: "Christopher Nolan",
-    cast: ["Cillian Murphy", "Emily Blunt", "Matt Damon", "Robert Downey Jr."],
-    description:
-      "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II. A gripping tale of brilliance, moral complexity, and consequence.",
-    duration: "180 min",
-    language: "English",
-  },
-  {
-    id: 2,
-    title: "Dune: Part Two",
-    year: 2024,
-    genre: ["Sci-Fi", "Adventure"],
-    poster: "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
-    rating: 4.5,
-    votes: 1897,
-    director: "Denis Villeneuve",
-    cast: ["Timothée Chalamet", "Zendaya", "Rebecca Ferguson", "Austin Butler"],
-    description:
-      "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the universe.",
-    duration: "166 min",
-    language: "English",
-  },
-  {
-    id: 3,
-    title: "Poor Things",
-    year: 2023,
-    genre: ["Fantasy", "Drama"],
-    poster: "https://image.tmdb.org/t/p/w500/kCGlIMHnOm8JPXInfouS8XT5HNa.jpg",
-    rating: 4.3,
-    votes: 1543,
-    director: "Yorgos Lanthimos",
-    cast: ["Emma Stone", "Mark Ruffalo", "Willem Dafoe", "Ramy Youssef"],
-    description:
-      "Bella Baxter is brought back to life by the brilliant and unorthodox scientist Dr. Godwin Baxter. Under his protection, she longs to learn. Swept off by the dashing lawyer Duncan Wedderburn, she travels across continents.",
-    duration: "141 min",
-    language: "English",
-  },
-  {
-    id: 4,
-    title: "The Zone of Interest",
-    year: 2023,
-    genre: ["Drama", "History"],
-    poster: "https://image.tmdb.org/t/p/w500/hUu9zyZmKuquJU4TzVkq0W3bUop.jpg",
-    rating: 4.1,
-    votes: 987,
-    director: "Jonathan Glazer",
-    cast: ["Christian Friedel", "Sandra Hüller"],
-    description:
-      "The commandant of Auschwitz, Rudolf Höss, and his wife strive to build a dream life for their family in a house and garden next to the camp.",
-    duration: "105 min",
-    language: "German",
-  },
-  {
-    id: 5,
-    title: "Killers of the Flower Moon",
-    year: 2023,
-    genre: ["Crime", "Drama"],
-    poster: "https://image.tmdb.org/t/p/w500/dB6Krk806zeqd0YNp2ngQ9zXteH.jpg",
-    rating: 4.4,
-    votes: 1678,
-    director: "Martin Scorsese",
-    cast: ["Leonardo DiCaprio", "Robert De Niro", "Lily Gladstone"],
-    description:
-      "Members of the Osage tribe in the United States are murdered under mysterious circumstances in the 1920s, spurring a major F.B.I. investigation involving J. Edgar Hoover.",
-    duration: "206 min",
-    language: "English",
-  },
-  {
-    id: 6,
-    title: "Past Lives",
-    year: 2023,
-    genre: ["Drama", "Romance"],
-    poster: "https://image.tmdb.org/t/p/w500/k3waqVXSnästad5IFxrMDE9bfbe.jpg",
-    rating: 4.6,
-    votes: 1234,
-    director: "Celine Song",
-    cast: ["Greta Lee", "Teo Yoo", "John Magaro"],
-    description:
-      "Nora and Hae Sung, two deeply connected childhood friends, are separated when Nora's family emigrates from South Korea. Twenty years later, they are reunited in New York for one fateful week.",
-    duration: "106 min",
-    language: "English",
-    poster: "https://image.tmdb.org/t/p/w500/k3waqVX5El7B0Smk5NeJMCCZjTd.jpg",
-  },
-  {
-    id: 7,
-    title: "Godzilla Minus One",
-    year: 2023,
-    genre: ["Action", "Sci-Fi"],
-    poster: "https://image.tmdb.org/t/p/w500/hkxxMIGaiCTmrEArK7J56JTKUlB.jpg",
-    rating: 4.5,
-    votes: 2100,
-    director: "Takashi Yamazaki",
-    cast: ["Ryunosuke Kamiki", "Minami Hamabe", "Yuki Yamada"],
-    description:
-      "Postwar Japan is at its lowest point when a new crisis emerges in the form of a giant monster, baptized in the horrific power of the atomic bomb.",
-    duration: "125 min",
-    language: "Japanese",
-  },
-  {
-    id: 8,
-    title: "Anatomy of a Fall",
-    year: 2023,
-    genre: ["Drama", "Thriller"],
-    poster: "https://image.tmdb.org/t/p/w500/kQs6keheMwCxJxrzV83VUwFtHkB.jpg",
-    rating: 4.2,
-    votes: 876,
-    director: "Justine Triet",
-    cast: ["Sandra Hüller", "Swann Arlaud", "Milo Machado Graner"],
-    description:
-      "A woman is suspected of murdering her husband after he is found dead near their alpine chalet. As the trial begins, unresolved questions about their life together emerge.",
-    duration: "150 min",
-    language: "French",
-  },
-  {
-    id: 9,
-    title: "Spider-Man: Across the Spider-Verse",
-    year: 2023,
-    genre: ["Animation", "Action"],
-    poster: "https://image.tmdb.org/t/p/w500/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg",
-    rating: 4.8,
-    votes: 3456,
-    director: "Joaquim Dos Santos",
-    cast: ["Shameik Moore", "Hailee Steinfeld", "Oscar Isaac"],
-    description:
-      "Miles Morales catapults across the Multiverse, where he encounters a team of Spider-People charged with protecting its very existence. When the heroes clash on how to handle a new threat, Miles must redefine what it means to be a hero.",
-    duration: "140 min",
-    language: "English",
-  },
-  {
-    id: 10,
-    title: "Barbie",
-    year: 2023,
-    genre: ["Comedy", "Fantasy"],
-    poster: "https://image.tmdb.org/t/p/w500/iuFNMS8vlzmfa85CH6w0szDMcYQ.jpg",
-    rating: 4.0,
-    votes: 2987,
-    director: "Greta Gerwig",
-    cast: ["Margot Robbie", "Ryan Gosling", "America Ferrera"],
-    description:
-      "Barbie suffers a crisis that leads her to question her world and her existence. She goes on a journey of self-discovery with Ken by her side to the real world.",
-    duration: "114 min",
-    language: "English",
-  },
-  {
-    id: 11,
-    title: "Challengers",
-    year: 2024,
-    genre: ["Drama", "Romance"],
-    poster: "https://image.tmdb.org/t/p/w500/H6vke7zGiuLsz4v4RPeReb9rsZ.jpg",
-    rating: 4.2,
-    votes: 1102,
-    director: "Luca Guadagnino",
-    cast: ["Zendaya", "Josh O'Connor", "Mike Faist"],
-    description:
-      "A former tennis prodigy turned coach puts her husband and his rival — her ex — on a collision course in a bid to help him win. The result is a story about passion, rivalry, and desire.",
-    duration: "131 min",
-    language: "English",
-  },
-  {
-    id: 12,
-    title: "Civil War",
-    year: 2024,
-    genre: ["Action", "Drama"],
-    poster: "https://image.tmdb.org/t/p/w500/sh7Rg8Er3tFcN9BpKIPOMvALgZd.jpg",
-    rating: 4.0,
-    votes: 1450,
-    director: "Alex Garland",
-    cast: ["Kirsten Dunst", "Wagner Moura", "Cailee Spaeny"],
-    description:
-      "A journey across a dystopian future America, following a team of military-embedded journalists as they race against time to reach DC before rebellious factions descend upon the White House.",
-    duration: "109 min",
-    language: "English",
-  },
-];
+const API_KEY = "3c97adf";
 
-const GENRES = ["All", ...new Set(MOVIES.flatMap((m) => m.genre))].sort();
-const YEARS = ["All", ...new Set(MOVIES.map((m) => m.year))].sort((a, b) => b - a);
+const parseRating = (imdbRating) => {
+  if (!imdbRating || imdbRating === "N/A") return 0;
+  return parseFloat(imdbRating) / 2; // Convert 10-scale to 5-scale
+};
+
+const parseVotes = (imdbVotes) => {
+  if (!imdbVotes || imdbVotes === "N/A") return 0;
+  return parseInt(imdbVotes.replace(/,/g, ""));
+};
 
 const StarRating = ({ value, onChange, size = "md" }) => {
   const [hovered, setHovered] = useState(0);
@@ -215,10 +40,10 @@ const MovieCard = ({ movie, userRating, onRate, onClick }) => {
 
   return (
     <div
-      className="group relative bg-stone-900 rounded-2xl overflow-hidden cursor-pointer border border-stone-800 hover:border-amber-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-amber-900/20"
+      className="group relative bg-stone-900 rounded-2xl overflow-hidden cursor-pointer border border-stone-800 hover:border-amber-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-amber-900/20 flex flex-col h-full"
       onClick={() => onClick(movie)}
     >
-      <div className="relative overflow-hidden aspect-2/3">
+      <div className="relative overflow-hidden aspect-2/3 shrink-0">
         <img
           src={movie.poster}
           alt={movie.title}
@@ -239,7 +64,7 @@ const MovieCard = ({ movie, userRating, onRate, onClick }) => {
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 flex flex-col grow">
         <h3 className="text-stone-100 font-bold text-sm leading-tight mb-2 line-clamp-2 group-hover:text-amber-300 transition-colors">
           {movie.title}
         </h3>
@@ -250,7 +75,7 @@ const MovieCard = ({ movie, userRating, onRate, onClick }) => {
             </span>
           ))}
         </div>
-        <div onClick={(e) => e.stopPropagation()}>
+        <div className="mt-auto" onClick={(e) => e.stopPropagation()}>
           <p className="text-stone-500 text-xs mb-1">Your rating:</p>
           <StarRating
             value={userRating || 0}
@@ -350,69 +175,140 @@ const Modal = ({ movie, userRating, onRate, onClose }) => {
 };
 
 export default function App() {
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const [genre, setGenre] = useState("All");
   const [year, setYear] = useState("All");
+  const [minRating, setMinRating] = useState("All");
   const [sortBy, setSortBy] = useState("rating");
-  const [userRatings, setUserRatings] = useState({});
+  
+  // Try to load user ratings from localStorage to make them persistent
+  const [userRatings, setUserRatings] = useState(() => {
+    try {
+      const saved = localStorage.getItem("cinerater_ratings");
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return {};
+  });
   const [selectedMovie, setSelectedMovie] = useState(null);
 
+  useEffect(() => {
+    const fetchMovies = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const query = searchInput.trim() || "Batman";
+        const res = await fetch(`https://www.omdbapi.com/?s=${encodeURIComponent(query)}&apikey=${API_KEY}`);
+        const data = await res.json();
+
+        if (data.Response === "True") {
+          const detailPromises = data.Search.slice(0, 10).map((m) =>
+            fetch(`https://www.omdbapi.com/?i=${m.imdbID}&apikey=${API_KEY}`).then((r) => r.json())
+          );
+          const detailedMovies = await Promise.all(detailPromises);
+
+          const formattedMovies = detailedMovies.map((m) => ({
+            id: m.imdbID,
+            title: m.Title,
+            year: parseInt(m.Year) || m.Year,
+            genre: m.Genre !== "N/A" ? m.Genre.split(", ") : ["Unknown"],
+            poster: m.Poster !== "N/A" && m.Poster !== "" ? m.Poster : `https://placehold.co/300x450/1c1917/d6d3d1?text=${encodeURIComponent(m.Title)}`,
+            rating: parseRating(m.imdbRating),
+            votes: parseVotes(m.imdbVotes),
+            director: m.Director,
+            cast: m.Actors !== "N/A" ? m.Actors.split(", ") : ["Unknown"],
+            description: m.Plot !== "N/A" ? m.Plot : "No description available.",
+            duration: m.Runtime,
+            language: m.Language,
+          }));
+          setMovies(formattedMovies);
+        } else {
+          setMovies([]);
+          setError(data.Error);
+        }
+      } catch (err) {
+        setMovies([]);
+        setError("Failed to fetch movies.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(() => {
+      fetchMovies();
+    }, 500);
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchInput]);
+
   const handleRate = (id, rating) => {
-    setUserRatings((prev) => ({ ...prev, [id]: rating }));
+    const newRatings = { ...userRatings, [id]: rating };
+    setUserRatings(newRatings);
+    localStorage.setItem("cinerater_ratings", JSON.stringify(newRatings));
   };
 
+  const GENRES = ["All", ...new Set(movies.flatMap((m) => m.genre))].sort();
+  const YEARS = ["All", ...new Set(movies.map((m) => m.year))].sort((a, b) => b - a);
+
   const filtered = useMemo(() => {
-    return MOVIES.filter((m) => {
-      const matchSearch = m.title.toLowerCase().includes(search.toLowerCase());
+    return movies.filter((m) => {
       const matchGenre = genre === "All" || m.genre.includes(genre);
       const matchYear = year === "All" || m.year === Number(year);
-      return matchSearch && matchGenre && matchYear;
+      const matchRating = minRating === "All" || m.rating >= Number(minRating);
+      return matchGenre && matchYear && matchRating;
     }).sort((a, b) => {
       if (sortBy === "rating") return b.rating - a.rating;
       if (sortBy === "year") return b.year - a.year;
       if (sortBy === "title") return a.title.localeCompare(b.title);
       return 0;
     });
-  }, [search, genre, year, sortBy]);
+  }, [movies, genre, year, minRating, sortBy]);
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100" style={{ fontFamily: "'Georgia', serif" }}>
       {/* Header */}
       <header className="sticky top-0 z-40 bg-stone-950/95 backdrop-blur-md border-b border-stone-800">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="w-9 h-9 bg-amber-400 rounded-xl flex items-center justify-center text-stone-950 text-lg font-black">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
+            <div className="w-9 h-9 bg-amber-400 rounded-xl flex items-center justify-center text-stone-950 text-lg font-black shadow-lg shadow-amber-400/20">
               ★
             </div>
             <div>
               <h1 className="text-lg font-black text-white leading-none tracking-tight">CineRater</h1>
-              <p className="text-stone-500 text-xs">Movie Reviews</p>
+              <p className="text-stone-500 text-xs uppercase tracking-wider font-bold mt-0.5">Movie Reviews</p>
             </div>
           </div>
 
           {/* Search */}
-          <div className="relative flex-1 max-w-sm">
+          <div className="relative w-full sm:flex-1 sm:max-w-md">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-500">🔍</span>
             <input
               type="text"
-              placeholder="Search movies..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-stone-900 border border-stone-700 rounded-xl pl-9 pr-4 py-2.5 text-sm text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500 transition-colors"
+              placeholder="Search Here..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="w-full bg-stone-900 border border-stone-700 rounded-xl pl-9 pr-4 py-2.5 text-sm text-stone-200 placeholder-stone-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all shadow-inner"
             />
           </div>
 
-          <span className="text-stone-600 text-sm hidden sm:block">{filtered.length} films</span>
+          <span className="text-stone-600 text-sm hidden lg:block font-medium">
+            {isLoading ? "Searching..." : `${filtered.length} results`}
+          </span>
         </div>
       </header>
 
       {/* Filters */}
-      <div className="bg-stone-900/50 border-b border-stone-800">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex gap-3 overflow-x-auto scrollbar-none flex-wrap sm:flex-nowrap">
+      <div className="bg-stone-900/50 border-b border-stone-800 backdrop-blur-sm sticky top-20 z-30">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex gap-3 overflow-x-auto scrollbar-none flex-nowrap">
           <select
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
-            className="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 cursor-pointer shrink-0"
+            className="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 cursor-pointer shrink-0 transition-colors hover:border-stone-500"
           >
             {GENRES.map((g) => (
               <option key={g} value={g}>{g === "All" ? "All Genres" : g}</option>
@@ -422,7 +318,7 @@ export default function App() {
           <select
             value={year}
             onChange={(e) => setYear(e.target.value)}
-            className="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 cursor-pointer shrink-0"
+            className="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 cursor-pointer shrink-0 transition-colors hover:border-stone-500"
           >
             {YEARS.map((y) => (
               <option key={y} value={y}>{y === "All" ? "All Years" : y}</option>
@@ -430,19 +326,31 @@ export default function App() {
           </select>
 
           <select
+            value={minRating}
+            onChange={(e) => setMinRating(e.target.value)}
+            className="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 cursor-pointer shrink-0 transition-colors hover:border-stone-500"
+          >
+            <option value="All">All Ratings</option>
+            <option value="4">4+ Stars</option>
+            <option value="3">3+ Stars</option>
+            <option value="2">2+ Stars</option>
+            <option value="1">1+ Stars</option>
+          </select>
+
+          <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 cursor-pointer shrink-0"
+            className="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 cursor-pointer shrink-0 transition-colors hover:border-stone-500"
           >
             <option value="rating">Sort: Top Rated</option>
             <option value="year">Sort: Newest</option>
             <option value="title">Sort: A–Z</option>
           </select>
 
-          {(search || genre !== "All" || year !== "All") && (
+          {(genre !== "All" || year !== "All" || minRating !== "All") && (
             <button
-              onClick={() => { setSearch(""); setGenre("All"); setYear("All"); }}
-              className="text-amber-400 text-sm hover:text-amber-300 border border-amber-500/30 rounded-lg px-3 py-2 hover:bg-amber-400/10 transition-all shrink-0"
+              onClick={() => { setGenre("All"); setYear("All"); setMinRating("All"); }}
+              className="text-amber-400 text-sm font-medium hover:text-amber-300 border border-amber-500/30 rounded-lg px-3 py-2 hover:bg-amber-400/10 transition-all shrink-0 ml-auto sm:ml-0"
             >
               Clear filters
             </button>
@@ -451,20 +359,33 @@ export default function App() {
       </div>
 
       {/* Grid */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {filtered.length === 0 ? (
+      <main className="max-w-7xl mx-auto px-4 py-8 relative min-h-[50vh]">
+        {isLoading ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4 text-stone-500 animate-pulse">
+              <div className="w-12 h-12 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
+              <p className="text-sm font-medium uppercase tracking-widest">Loading Movies...</p>
+            </div>
+          </div>
+        ) : error ? (
           <div className="text-center py-24">
-            <div className="text-6xl mb-4">🎬</div>
-            <p className="text-stone-400 text-lg">No movies match your search.</p>
+            <div className="text-5xl mb-4 text-stone-700">⚠️</div>
+            <p className="text-red-400 text-lg font-medium">{error}</p>
+            <p className="text-stone-500 mt-2 text-sm">Try searching for something else.</p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-24">
+            <div className="text-6xl mb-4 opacity-50">🎬</div>
+            <p className="text-stone-400 text-lg">No movies match your filters.</p>
             <button
-              onClick={() => { setSearch(""); setGenre("All"); setYear("All"); }}
-              className="mt-4 text-amber-400 underline text-sm"
+              onClick={() => { setGenre("All"); setYear("All"); setMinRating("All"); }}
+              className="mt-4 text-amber-400 underline text-sm hover:text-amber-300 transition-colors"
             >
               Clear all filters
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-4 lg:gap-6">
             {filtered.map((movie) => (
               <MovieCard
                 key={movie.id}
@@ -479,10 +400,20 @@ export default function App() {
       </main>
 
       {/* Stats bar */}
-      <footer className="border-t border-stone-800 mt-8">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between text-stone-600 text-xs">
-          <span>CineRater · {MOVIES.length} movies · {Object.keys(userRatings).length} rated by you</span>
-          <span>Built with React + Tailwind</span>
+      <footer className="border-t border-stone-800 mt-auto bg-stone-950">
+        <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between text-stone-500 text-xs font-medium gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-amber-500">CineRater</span>
+            <span className="opacity-50">•</span>
+            <span>{movies.length} movies loaded</span>
+            <span className="opacity-50">•</span>
+            <span>{Object.keys(userRatings).length} rated</span>
+          </div>
+          <div className="flex gap-4">
+            <span>Powered by OMDb API</span>
+            <span className="opacity-50">•</span>
+            <span>React + Tailwind</span>
+          </div>
         </div>
       </footer>
 
